@@ -1,19 +1,26 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
+branches:
+include:
 - main
-
+stages:
+- stage: __default
+jobs:
+- job: Job
 pool:
-  vmImage: ubuntu-latest
-
+vmImage: ubuntu-latest
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
-
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+- task: Maven@3
+inputs:
+mavenPomFile: &#39;artifact1/pom.xml&#39;
+mavenOptions: &#39;-Xmx3072m&#39;
+javaHomeOption: &#39;JDKVersion&#39;
+jdkVersionOption: &#39;17&#39;
+jdkArchitectureOption: &#39;x64&#39;
+publishJUnitResults: true
+testResultsFiles: &#39;**/surefire-reports/TEST-*.xml&#39;
+goals: &#39;clean package&#39;
+- task: PublishBuildArtifacts@1
+inputs:
+PathtoPublish: &#39;artifact1/target&#39;
+ArtifactName: &#39;drop&#39;
+publishLocation: &#39;Container&#39;
